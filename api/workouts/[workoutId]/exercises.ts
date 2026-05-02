@@ -1,5 +1,5 @@
-import { AuthError, requireAuthUser } from '../../_lib/auth'
-import { prisma } from '../../_lib/prisma'
+import { AuthError, requireAuthUser } from '../../_lib/auth.js'
+import { prisma } from '../../_lib/prisma.js'
 
 type JsonResponse = {
   status: (code: number) => JsonResponse

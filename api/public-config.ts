@@ -1,4 +1,4 @@
-import { getServerEnv } from '../_lib/env'
+import { getServerEnv } from './_lib/env.js'
 
 type JsonResponse = {
   status: (code: number) => JsonResponse

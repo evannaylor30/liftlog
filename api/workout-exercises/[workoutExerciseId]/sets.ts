@@ -1,5 +1,5 @@
-import { AuthError, requireAuthUser } from '../../_lib/auth'
-import { prisma } from '../../_lib/prisma'
+import { AuthError, requireAuthUser } from '../../_lib/auth.js'
+import { prisma } from '../../_lib/prisma.js'
 
 const LB_TO_KG = 0.45359237
 const KG_TO_LB = 2.2046226218
