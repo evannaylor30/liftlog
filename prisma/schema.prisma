@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id             String           @id @db.Uuid
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  displayName    String?
+  weightUnit     WeightUnit       @default(kg)
+  workouts       WorkoutSession[]
+  exercises      Exercise[]
+  bodyweightLogs BodyweightLog[]
+  stepsLogs      StepsLog[]
+}
+
+model WorkoutSession {
+  id               String            @id @default(uuid()) @db.Uuid
+  userId           String            @db.Uuid
+  startedAt        DateTime
+  name             String?
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  user             Profile           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutExercises WorkoutExercise[]
+
+  @@index([userId, startedAt])
+}
+
+model Exercise {
+  id               String            @id @default(uuid()) @db.Uuid
+  userId           String            @db.Uuid
+  name             String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  user             Profile           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutExercises WorkoutExercise[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model WorkoutExercise {
+  id               String         @id @default(uuid()) @db.Uuid
+  workoutSessionId String         @db.Uuid
+  exerciseId       String         @db.Uuid
+  sortOrder        Int
+  createdAt        DateTime       @default(now())
+  workoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  exercise         Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  sets             SetEntry[]
+
+  @@unique([workoutSessionId, sortOrder])
+  @@index([exerciseId])
+}
+
+model SetEntry {
+  id                String          @id @default(uuid()) @db.Uuid
+  workoutExerciseId String          @db.Uuid
+  setNumber         Int
+  reps              Int
+  weightKg          Decimal         @db.Decimal(6, 2)
+  createdAt         DateTime        @default(now())
+  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([workoutExerciseId, setNumber])
+}
+
+model BodyweightLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  date      DateTime @db.Date
+  weightKg  Decimal  @db.Decimal(5, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model StepsLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  date      DateTime @db.Date
+  steps     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+enum WeightUnit {
+  kg
+  lb
+}
