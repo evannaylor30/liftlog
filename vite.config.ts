@@ -13,6 +13,10 @@ function liftlogEnvJson(mode: string, cwd: string) {
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
+  build: {
+    /** KB; avoids noisy CI/build logs. Not related to API or dashboard failures. */
+    chunkSizeWarningLimit: 600,
+  },
   plugins: [
     react(),
     tailwindcss(),
