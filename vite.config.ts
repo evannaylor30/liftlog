@@ -1,28 +1,27 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
-// Vercel injects env at build time; explicit `define` avoids rare cases where
-// `import.meta.env.VITE_*` is not replaced in the client bundle.
-function vercelSupabaseDefine(): Record<string, string> | undefined {
-  if (process.env.VERCEL !== '1') {
-    return undefined
-  }
-  const url = process.env.VITE_SUPABASE_URL
-  const key = process.env.VITE_SUPABASE_ANON_KEY
+// Inline Supabase client env at build time from `.env` (local) and `process.env`
+// (Vercel / CI). Ensures the production bundle always gets literals, not empty
+// `import.meta.env.*` placeholders.
+function supabaseDefine(mode: string, cwd: string) {
+  const env = loadEnv(mode, cwd, 'VITE_')
+  const url = env.VITE_SUPABASE_URL
+  const key = env.VITE_SUPABASE_ANON_KEY
   if (!url || !key) {
-    return undefined
+    return {}
   }
   return {
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(url),
     'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(key),
-  }
+  } as Record<string, string>
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
   define: {
-    ...vercelSupabaseDefine(),
+    ...supabaseDefine(mode, process.cwd()),
   },
-})
+}))
