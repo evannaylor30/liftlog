@@ -17,10 +17,12 @@ export async function bootstrapProfile(accessToken: string) {
 
   if (!response.ok) {
     const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
+      | { error?: string; detail?: string }
       | null
 
-    throw new Error(payload?.error ?? 'Profile bootstrap failed')
+    const base = payload?.error ?? 'Profile bootstrap failed'
+    const detail = payload?.detail
+    throw new Error(detail ? `${base}: ${detail}` : base)
   }
 
   return (await response.json()) as {

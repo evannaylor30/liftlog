@@ -45,6 +45,12 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
       return
     }
 
-    res.status(500).json({ error: 'Failed to bootstrap profile' })
+    const detail = error instanceof Error ? error.message : String(error)
+    console.error('[api/profile/bootstrap]', error)
+
+    res.status(500).json({
+      error: 'Failed to bootstrap profile',
+      detail,
+    })
   }
 }
