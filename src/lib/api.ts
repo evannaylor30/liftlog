@@ -13,7 +13,10 @@ async function throwApiError(response: Response, fallback: string): Promise<neve
   const payload = (await response.json().catch(() => null)) as ApiErrorPayload | null
   const base = payload?.error ?? fallback
   const detail = payload?.detail
-  throw new Error(detail ? `${base}: ${detail}` : base)
+  const message = detail ? `${base}: ${detail}` : base
+  // Browser’s “Failed to load resource: 500” line has no body; log the server message here.
+  console.error('[Liftlog API]', response.status, response.url, message)
+  throw new Error(message)
 }
 
 export async function bootstrapProfile(accessToken: string) {
