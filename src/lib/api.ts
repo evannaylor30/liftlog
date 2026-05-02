@@ -7,6 +7,15 @@ import type {
   WorkoutSessionItem,
 } from '../types/domain'
 
+type ApiErrorPayload = { error?: string; detail?: string }
+
+async function throwApiError(response: Response, fallback: string): Promise<never> {
+  const payload = (await response.json().catch(() => null)) as ApiErrorPayload | null
+  const base = payload?.error ?? fallback
+  const detail = payload?.detail
+  throw new Error(detail ? `${base}: ${detail}` : base)
+}
+
 export async function bootstrapProfile(accessToken: string) {
   const response = await fetch('/api/profile/bootstrap', {
     method: 'POST',
@@ -16,13 +25,7 @@ export async function bootstrapProfile(accessToken: string) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string; detail?: string }
-      | null
-
-    const base = payload?.error ?? 'Profile bootstrap failed'
-    const detail = payload?.detail
-    throw new Error(detail ? `${base}: ${detail}` : base)
+    await throwApiError(response, 'Profile bootstrap failed')
   }
 
   return (await response.json()) as {
@@ -43,11 +46,7 @@ export async function listWorkouts(accessToken: string) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to load workouts')
+    await throwApiError(response, 'Failed to load workouts')
   }
 
   return (await response.json()) as {
@@ -77,11 +76,7 @@ export async function createWorkout(input: CreateWorkoutInput) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to create workout')
+    await throwApiError(response, 'Failed to create workout')
   }
 
   return (await response.json()) as {
@@ -98,11 +93,7 @@ export async function deleteWorkout(accessToken: string, workoutId: string) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to delete workout')
+    await throwApiError(response, 'Failed to delete workout')
   }
 }
 
@@ -125,11 +116,7 @@ export async function addExerciseToWorkout(input: AddExerciseInput) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to add exercise')
+    await throwApiError(response, 'Failed to add exercise')
   }
 
   return (await response.json()) as {
@@ -161,11 +148,7 @@ export async function addSetToWorkoutExercise(input: AddSetInput) {
   )
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to add set')
+    await throwApiError(response, 'Failed to add set')
   }
 
   return (await response.json()) as {
@@ -191,11 +174,7 @@ export async function listBodyweightLogs(
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to load bodyweight logs')
+    await throwApiError(response, 'Failed to load bodyweight logs')
   }
 
   return (await response.json()) as {
@@ -223,11 +202,7 @@ export async function upsertBodyweightLog(input: UpsertBodyweightInput) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to save bodyweight log')
+    await throwApiError(response, 'Failed to save bodyweight log')
   }
 
   return (await response.json()) as {
@@ -253,11 +228,7 @@ export async function listStepsLogs(
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to load steps logs')
+    await throwApiError(response, 'Failed to load steps logs')
   }
 
   return (await response.json()) as {
@@ -285,11 +256,7 @@ export async function upsertStepsLog(input: UpsertStepsInput) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to save steps log')
+    await throwApiError(response, 'Failed to save steps log')
   }
 
   return (await response.json()) as {
@@ -306,11 +273,7 @@ export async function getDashboardMetrics(accessToken: string) {
   })
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null
-
-    throw new Error(payload?.error ?? 'Failed to load dashboard metrics')
+    await throwApiError(response, 'Failed to load dashboard metrics')
   }
 
   return (await response.json()) as DashboardMetrics

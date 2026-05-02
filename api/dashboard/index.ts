@@ -155,6 +155,11 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
       return
     }
 
-    res.status(500).json({ error: 'Failed to load dashboard data' })
+    const detail = error instanceof Error ? error.message : String(error)
+    console.error('[api/dashboard]', error)
+    res.status(500).json({
+      error: 'Failed to load dashboard data',
+      detail,
+    })
   }
 }
