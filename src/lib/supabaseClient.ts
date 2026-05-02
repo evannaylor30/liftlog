@@ -8,7 +8,7 @@ const env: Env = {
 
 if (!env.VITE_SUPABASE_URL || !env.VITE_SUPABASE_ANON_KEY) {
   throw new Error(
-    'Missing Supabase env vars. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local.',
+    'Missing Supabase env vars. Locally: add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env. On Vercel: set the same keys under Project → Settings → Environment Variables (Production), then redeploy.',
   )
 }
 
