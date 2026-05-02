@@ -1,3 +1,5 @@
+import { Pool } from 'pg'
+
 type JsonResponse = {
   status: (code: number) => JsonResponse
   json: (payload: unknown) => void
@@ -9,6 +11,8 @@ type RequestLike = {
 
 /**
  * No auth — use to verify Vercel has DATABASE_URL and Postgres is reachable.
+ * Uses `pg` directly so Vercel does not need a separate bundled chunk for `./_lib/prisma`
+ * (dynamic import of that path fails at runtime on `/var/task`).
  * Open GET /api/health in the browser on production.
  */
 export default async function handler(req: RequestLike, res: JsonResponse) {
@@ -37,9 +41,20 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
     return
   }
 
+  const connectionString = process.env.DATABASE_URL!
+
   try {
-    const { prisma } = await import('./_lib/prisma')
-    await prisma.$queryRaw`SELECT 1`
+    const pool = new Pool({
+      connectionString,
+      max: 1,
+      connectionTimeoutMillis: 12_000,
+    })
+    try {
+      await pool.query('SELECT 1')
+    } finally {
+      await pool.end()
+    }
+
     res.status(200).json({
       ok: true,
       database: 'connected',
