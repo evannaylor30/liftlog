@@ -107,13 +107,14 @@ type AddExerciseInput = {
 }
 
 export async function addExerciseToWorkout(input: AddExerciseInput) {
-  const response = await fetch(`/api/workouts/${input.workoutId}/exercises`, {
+  const response = await fetch('/api/create-workout-exercise', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${input.accessToken}`,
     },
     body: JSON.stringify({
+      workoutId: input.workoutId,
       name: input.name,
     }),
   })

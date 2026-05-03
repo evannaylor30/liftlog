@@ -1,4 +1,5 @@
 import { Pool } from 'pg'
+import { getTrimmedDatabaseUrl } from './_lib/databaseUrl.js'
 
 type JsonResponse = {
   status: (code: number) => JsonResponse
@@ -21,7 +22,7 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
     return
   }
 
-  const hasDatabaseUrl = Boolean(process.env.DATABASE_URL)
+  const hasDatabaseUrl = Boolean(process.env.DATABASE_URL?.trim())
   const hasSupabaseUrl = Boolean(
     process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL,
   )
@@ -41,7 +42,21 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
     return
   }
 
-  const connectionString = process.env.DATABASE_URL!
+  let connectionString: string
+  try {
+    connectionString = getTrimmedDatabaseUrl()
+  } catch {
+    res.status(200).json({
+      ok: false,
+      database: 'invalid_DATABASE_URL',
+      message: 'DATABASE_URL is missing or invalid (check env value shape).',
+      hint: 'No quotes around the full URI; use Supabase “Copy” URI; encode special characters in the password.',
+      hasDatabaseUrl: false,
+      hasSupabaseUrl,
+      hasSupabaseKey,
+    })
+    return
+  }
 
   try {
     const pool = new Pool({

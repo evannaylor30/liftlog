@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useMemo, useState } from 'react'
+import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   addExerciseToWorkout,
   addSetToWorkoutExercise,
@@ -53,17 +53,26 @@ export function WorkoutsPage() {
     Record<string, { reps: string; weightKg: string }>
   >({})
 
+  const refreshWorkouts = useCallback(async () => {
+    if (!session) {
+      return
+    }
+    const result = await listWorkouts(session.access_token)
+    setWorkouts(result.workouts)
+  }, [session])
+
   useEffect(() => {
     if (!session) {
       return
     }
-    const currentSession = session
+
+    const token = session.access_token
 
     async function loadWorkouts() {
       try {
         setIsLoading(true)
         setError(null)
-        const result = await listWorkouts(currentSession.access_token)
+        const result = await listWorkouts(token)
         setWorkouts(result.workouts)
       } catch (loadError) {
         setError(
@@ -126,25 +135,13 @@ export function WorkoutsPage() {
     try {
       setIsSavingExerciseForWorkout(workoutId)
       setError(null)
-      const result = await addExerciseToWorkout({
+      await addExerciseToWorkout({
         accessToken: session.access_token,
         workoutId,
         name,
       })
 
-      setWorkouts((current) =>
-        current.map((workout) =>
-          workout.id === workoutId
-            ? {
-                ...workout,
-                workoutExercises: [
-                  ...workout.workoutExercises,
-                  result.workoutExercise,
-                ],
-              }
-            : workout,
-        ),
-      )
+      await refreshWorkouts()
 
       setExerciseNameByWorkoutId((current) => ({
         ...current,

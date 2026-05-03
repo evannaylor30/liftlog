@@ -12,7 +12,7 @@ Current endpoints:
 - `GET /api/workouts` lists the signed-in user's workout sessions.
 - `POST /api/workouts` creates a workout session for the signed-in user.
 - `DELETE /api/session/:id` deletes one workout session (and its exercises/sets) for the signed-in user.
-- `POST /api/workouts/:workoutId/exercises` adds an exercise to one workout session.
+- `POST /api/create-workout-exercise` adds an exercise to a workout (`body`: `{ workoutId, name }`).
 - `POST /api/workout-exercises/:workoutExerciseId/sets` adds one set (reps + lb input, stored as kg).
 - `GET /api/bodyweight` lists recent bodyweight logs for the signed-in user. Optional query: `take` (default 30, max 400).
 - `POST /api/bodyweight` creates or updates one bodyweight log for the date (lb input, stored as kg).

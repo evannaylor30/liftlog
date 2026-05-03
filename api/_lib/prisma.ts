@@ -1,15 +1,13 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
+import { getTrimmedDatabaseUrl } from './databaseUrl.js'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) {
-    throw new Error('Missing DATABASE_URL for Prisma client')
-  }
+  const connectionString = getTrimmedDatabaseUrl()
 
   const adapter = new PrismaPg({ connectionString })
   return new PrismaClient({ adapter })

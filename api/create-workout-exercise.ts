@@ -1,5 +1,7 @@
-import { AuthError, requireAuthUser } from '../../_lib/auth.js'
-import { prisma } from '../../_lib/prisma.js'
+import { AuthError, requireAuthUser } from './_lib/auth.js'
+import { prisma } from './_lib/prisma.js'
+
+const KG_TO_LB = 2.2046226218
 
 type JsonResponse = {
   status: (code: number) => JsonResponse
@@ -10,16 +12,11 @@ type RequestLike = {
   method?: string
   headers?: Record<string, string | string[] | undefined>
   body?: unknown
-  query?: Record<string, string | string[] | undefined>
 }
 
 type Payload = {
+  workoutId?: string
   name?: string
-}
-
-function readWorkoutId(query: RequestLike['query']) {
-  const value = query?.workoutId
-  return Array.isArray(value) ? value[0] : value
 }
 
 function parsePayload(body: unknown): Payload {
@@ -38,12 +35,12 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
 
   try {
     const user = await requireAuthUser(req)
-    const workoutId = readWorkoutId(req.query)
     const payload = parsePayload(req.body)
+    const workoutId = payload.workoutId?.trim()
     const name = payload.name?.trim()
 
     if (!workoutId) {
-      res.status(400).json({ error: 'Missing workoutId route param' })
+      res.status(400).json({ error: 'workoutId is required' })
       return
     }
 
@@ -124,7 +121,7 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
           id: setEntry.id,
           setNumber: setEntry.setNumber,
           reps: setEntry.reps,
-          weightKg: setEntry.weightKg.toNumber(),
+          weightLb: Number((setEntry.weightKg.toNumber() * KG_TO_LB).toFixed(2)),
         })),
       },
     })
@@ -134,6 +131,11 @@ export default async function handler(req: RequestLike, res: JsonResponse) {
       return
     }
 
-    res.status(500).json({ error: 'Failed to add exercise to workout' })
+    const detail = error instanceof Error ? error.message : String(error)
+    console.error('[api/create-workout-exercise]', error)
+    res.status(500).json({
+      error: 'Failed to add exercise to workout',
+      detail,
+    })
   }
 }
