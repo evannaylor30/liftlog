@@ -1,6 +1,10 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { BodyweightCalendar } from '../features/bodyweight/BodyweightCalendar'
-import { listBodyweightLogs, upsertBodyweightLog } from '../lib/api'
+import {
+  deleteBodyweightLog,
+  listBodyweightLogs,
+  upsertBodyweightLog,
+} from '../lib/api'
 import { shiftMonthYm } from '../lib/monthYm'
 import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorAlert } from '../components/ui/ErrorAlert'
@@ -31,6 +35,7 @@ export function BodyweightPage() {
   const [weightOverride, setWeightOverride] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [deletingLogId, setDeletingLogId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const loggedDates = useMemo(() => {
@@ -122,6 +127,35 @@ export function BodyweightPage() {
     }
   }
 
+  async function onDeleteWeighIn(logId: string, entryDate: string) {
+    if (!session) {
+      return
+    }
+
+    const confirmed = window.confirm(
+      `Remove the weigh-in for ${formatDate(entryDate)}? You can log again anytime.`,
+    )
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setDeletingLogId(logId)
+      setError(null)
+      await deleteBodyweightLog(session.access_token, logId)
+      setLogs((current) => current.filter((log) => log.id !== logId))
+      if (date.startsWith(entryDate.slice(0, 10))) {
+        setWeightOverride(null)
+      }
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error ? deleteError.message : 'Failed to delete weigh-in',
+      )
+    } finally {
+      setDeletingLogId(null)
+    }
+  }
+
   return (
     <section className="lift-page">
       <PageHeader
@@ -189,11 +223,24 @@ export function BodyweightPage() {
         ) : (
           <ul className="space-y-2">
             {logs.map((log) => (
-              <li key={log.id} className="lift-list-row">
-                <p className="font-medium text-[var(--lift-text)]">{formatDate(log.date)}</p>
-                <p className="mt-1 text-sm tabular-nums text-[var(--lift-text-muted)]">
-                  {log.weightLb} lb
-                </p>
+              <li
+                key={log.id}
+                className="lift-list-row flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div>
+                  <p className="font-medium text-[var(--lift-text)]">{formatDate(log.date)}</p>
+                  <p className="mt-1 text-sm tabular-nums text-[var(--lift-text-muted)]">
+                    {log.weightLb} lb
+                  </p>
+                </div>
+                <button
+                  className="lift-btn-secondary shrink-0 self-start px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
+                  disabled={deletingLogId === log.id}
+                  type="button"
+                  onClick={() => void onDeleteWeighIn(log.id, log.date)}
+                >
+                  {deletingLogId === log.id ? 'Deleting…' : 'Delete'}
+                </button>
               </li>
             ))}
           </ul>

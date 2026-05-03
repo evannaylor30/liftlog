@@ -214,6 +214,19 @@ export async function upsertBodyweightLog(input: UpsertBodyweightInput) {
   }
 }
 
+export async function deleteBodyweightLog(accessToken: string, logId: string) {
+  const response = await fetch(`/api/bodyweight/${encodeURIComponent(logId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!response.ok) {
+    await throwApiError(response, 'Failed to delete weigh-in')
+  }
+}
+
 export async function listStepsLogs(
   accessToken: string,
   options?: { take?: number },

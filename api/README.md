@@ -16,6 +16,7 @@ Current endpoints:
 - `POST /api/workout-exercises/:workoutExerciseId/sets` adds one set (reps + lb input, stored as kg).
 - `GET /api/bodyweight` lists recent bodyweight logs for the signed-in user. Optional query: `take` (default 30, max 400).
 - `POST /api/bodyweight` creates or updates one bodyweight log for the date (lb input, stored as kg).
+- `DELETE /api/bodyweight/:id` deletes one weigh-in for the signed-in user.
 - `GET /api/steps` lists recent daily steps logs for the signed-in user. Optional query: `take` (default 30, max 400).
 - `POST /api/steps` creates or updates one daily steps log.
 - `GET /api/dashboard` returns dashboard totals plus bodyweight and steps 7-day average trends.
