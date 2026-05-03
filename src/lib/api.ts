@@ -267,6 +267,19 @@ export async function upsertStepsLog(input: UpsertStepsInput) {
   }
 }
 
+export async function deleteStepsLog(accessToken: string, logId: string) {
+  const response = await fetch(`/api/steps/${encodeURIComponent(logId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!response.ok) {
+    await throwApiError(response, 'Failed to delete steps entry')
+  }
+}
+
 export async function getDashboardMetrics(accessToken: string) {
   const response = await fetch('/api/dashboard', {
     method: 'GET',
