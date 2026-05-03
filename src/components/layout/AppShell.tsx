@@ -16,7 +16,7 @@ export function AppShell() {
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--lift-app-bg)] text-[var(--lift-text)] antialiased">
       <header className="lift-shell-header pt-[max(0.5rem,env(safe-area-inset-top,0px))]">
-        <div className="mx-auto flex max-w-lg flex-col gap-3 px-4 py-3 sm:max-w-5xl sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:gap-y-2 sm:px-6">
+        <div className="mx-auto flex max-w-lg flex-col gap-3 px-[max(1rem,env(safe-area-inset-left,0px))] py-3 pe-[max(1rem,env(safe-area-inset-right,0px))] sm:max-w-5xl sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:gap-y-2 sm:px-6">
           <div className="flex items-center gap-3">
             <Link
               className="group flex items-center gap-2.5 rounded-xl pr-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lift-accent)]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--lift-app-bg)]"
@@ -52,7 +52,7 @@ export function AppShell() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 md:justify-end">
+          <div className="flex flex-wrap items-center gap-2 md:justify-end">
             {isLoading ? (
               <span className="text-xs font-medium text-[var(--lift-text-muted)]">
                 Loading…
@@ -60,13 +60,13 @@ export function AppShell() {
             ) : session ? (
               <>
                 <span
-                  className="max-w-[9rem] truncate text-[11px] font-medium text-[var(--lift-text-muted)] sm:max-w-[14rem]"
+                  className="max-w-[min(100%,12rem)] truncate text-[11px] font-medium text-[var(--lift-text-muted)] sm:max-w-[14rem]"
                   title={session.user.email ?? undefined}
                 >
                   {session.user.email}
                 </span>
                 <button
-                  className="lift-btn-secondary px-3 py-2 text-xs"
+                  className="lift-btn-secondary shrink-0 px-4 text-xs"
                   type="button"
                   onClick={() => {
                     void signOut()
@@ -76,7 +76,7 @@ export function AppShell() {
                 </button>
               </>
             ) : (
-              <Link className="lift-btn-primary px-3 py-2 text-xs" to="/auth">
+              <Link className="lift-btn-primary shrink-0 px-4 text-xs" to="/auth">
                 Sign in
               </Link>
             )}
@@ -84,11 +84,11 @@ export function AppShell() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5 sm:max-w-5xl sm:px-6 sm:pb-10 sm:pt-8 md:pb-10">
+      <main className="mx-auto w-full max-w-lg flex-1 px-[max(1rem,env(safe-area-inset-left,0px))] pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] pe-[max(1rem,env(safe-area-inset-right,0px))] pt-5 sm:max-w-5xl sm:px-6 sm:pb-10 sm:pt-8 md:pb-10">
         <Outlet />
       </main>
 
-      <footer className="mb-24 flex flex-col items-center justify-center gap-2 border-t border-[var(--lift-border)] px-4 py-4 text-center md:mb-0 md:flex-row md:gap-3 md:py-4">
+      <footer className="hidden flex-col items-center justify-center gap-2 border-t border-[var(--lift-border)] px-4 py-5 text-center md:mb-0 md:flex md:flex-row md:gap-3">
         <LiftlogLogo className="h-8 w-8 opacity-90 md:h-9 md:w-9" />
         <p className="text-[11px] font-medium leading-snug text-[var(--lift-text-muted)]">
           <span className="font-semibold text-[var(--lift-text)]">Liftlog</span>

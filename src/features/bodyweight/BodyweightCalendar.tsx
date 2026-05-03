@@ -84,7 +84,7 @@ export function BodyweightCalendar({
         >
           ‹
         </button>
-        <p className="text-center text-sm font-bold tracking-tight text-[var(--lift-text)]">
+        <p className="text-center text-base font-bold tracking-tight text-[var(--lift-text)] sm:text-sm">
           {monthLabel}
         </p>
         <button
@@ -97,7 +97,7 @@ export function BodyweightCalendar({
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 text-center">
+      <div className="grid grid-cols-7 gap-2 text-center sm:gap-1.5">
         {WEEKDAYS.map((wd, i) => (
           <div
             key={`w-${i}-${wd}`}

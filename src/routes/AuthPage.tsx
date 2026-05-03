@@ -146,7 +146,7 @@ export function AuthPage() {
         </form>
 
         <button
-          className="max-w-md text-center text-sm font-medium text-[var(--lift-text-muted)] underline-offset-4 transition hover:text-[var(--lift-text)] hover:underline"
+          className="max-w-md min-h-11 w-full rounded-xl px-4 py-3 text-center text-sm font-medium text-[var(--lift-text-muted)] underline-offset-4 transition hover:bg-[var(--lift-surface-2)] hover:text-[var(--lift-text)] hover:underline active:scale-[0.99]"
           type="button"
           onClick={() =>
             setMode((current) => (current === 'sign-in' ? 'sign-up' : 'sign-in'))

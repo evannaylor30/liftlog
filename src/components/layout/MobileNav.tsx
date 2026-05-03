@@ -12,7 +12,7 @@ function IconHome({ active }: { active: boolean }) {
   return (
     <svg
       aria-hidden
-      className={cn('size-6', active && 'drop-shadow-sm')}
+      className={cn('size-7', active && 'drop-shadow-sm')}
       fill="none"
       stroke="currentColor"
       strokeWidth={2}
@@ -27,7 +27,7 @@ function IconTrain({ active }: { active: boolean }) {
   return (
     <svg
       aria-hidden
-      className={cn('size-6', active && 'drop-shadow-sm')}
+      className={cn('size-7', active && 'drop-shadow-sm')}
       fill="none"
       stroke="currentColor"
       strokeWidth={2}
@@ -46,7 +46,7 @@ function IconScale({ active }: { active: boolean }) {
   return (
     <svg
       aria-hidden
-      className={cn('size-6', active && 'drop-shadow-sm')}
+      className={cn('size-7', active && 'drop-shadow-sm')}
       fill="none"
       stroke="currentColor"
       strokeWidth={2}
@@ -62,7 +62,7 @@ function IconSteps({ active }: { active: boolean }) {
   return (
     <svg
       aria-hidden
-      className={cn('size-6', active && 'drop-shadow-sm')}
+      className={cn('size-7', active && 'drop-shadow-sm')}
       fill="none"
       stroke="currentColor"
       strokeWidth={2}

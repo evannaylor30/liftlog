@@ -43,12 +43,44 @@
     -moz-osx-font-smoothing: grayscale;
     color-scheme: light dark;
     background: var(--lift-app-bg);
+    /* Softer than default gray flash on tap (iOS/Android). */
+    -webkit-tap-highlight-color: rgb(109 40 217 / 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html {
+      -webkit-tap-highlight-color: rgb(167 139 250 / 0.12);
+    }
   }
 
   body {
     margin: 0;
     min-height: 100dvh;
     color: var(--lift-text);
+  }
+
+  /* Prevent double-tap zoom delay on buttons/links without blocking pinch-zoom elsewhere. */
+  button,
+  [role='button'],
+  a[href] {
+    touch-action: manipulation;
+  }
+
+  /* Inputs below 16px cause iOS Safari to zoom on focus. */
+  @media (max-width: 639px) {
+    .lift-input,
+    .lift-textarea {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+
+    .lift-input-sm {
+      font-size: 1rem;
+      line-height: 1.35rem;
+      min-height: 2.75rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
   }
 }
 
@@ -59,7 +91,7 @@
   }
 
   .lift-page {
-    @apply space-y-6 sm:space-y-8;
+    @apply space-y-5 sm:space-y-8;
   }
 
   .lift-card {
@@ -156,11 +188,19 @@
   }
 
   .lift-btn-secondary {
-    @apply inline-flex items-center justify-center px-3 py-2.5 text-xs font-bold outline-none transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45;
+    @apply inline-flex min-h-11 items-center justify-center px-3 py-2.5 text-xs font-bold outline-none transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 sm:min-h-0;
     border-radius: var(--lift-radius);
     background: var(--lift-surface);
     border: 1px solid var(--lift-border-strong);
     color: var(--lift-text);
+  }
+
+  @media (max-width: 639px) {
+    .lift-btn-secondary {
+      padding-left: 0.875rem;
+      padding-right: 0.875rem;
+      font-size: 0.8125rem;
+    }
   }
 
   .lift-btn-secondary:focus-visible {
@@ -168,7 +208,7 @@
   }
 
   .lift-btn-ghost {
-    @apply inline-flex items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold outline-none transition active:scale-[0.98];
+    @apply inline-flex min-h-11 items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold outline-none transition active:scale-[0.98] sm:min-h-0;
     color: var(--lift-text-muted);
   }
 
@@ -236,8 +276,10 @@
 
   /* Mobile bottom nav */
   .lift-mobile-nav {
-    @apply fixed inset-x-0 bottom-0 z-50 flex border-t backdrop-blur-xl;
-    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+    @apply fixed inset-x-0 bottom-0 z-50 flex touch-manipulation border-t backdrop-blur-xl;
+    padding-bottom: max(0.625rem, env(safe-area-inset-bottom, 0px));
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
     background: color-mix(in srgb, var(--lift-surface) 92%, transparent);
     border-color: var(--lift-border);
     box-shadow: 0 -8px 32px rgb(0 0 0 / 0.06);
@@ -250,7 +292,7 @@
   }
 
   .lift-mobile-nav-item {
-    @apply flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-bold uppercase tracking-wide outline-none transition;
+    @apply flex min-h-[3.25rem] flex-1 flex-col items-center justify-center gap-1 py-1.5 text-[10px] font-bold uppercase tracking-wide outline-none transition;
     color: var(--lift-text-muted);
   }
 
@@ -260,7 +302,7 @@
 
   /* Calendar day cell (variants composed in BodyweightCalendar) */
   .lift-cal-day {
-    @apply relative flex aspect-square min-h-[2.25rem] max-h-10 w-full items-center justify-center rounded-lg text-[11px] font-bold outline-none transition;
+    @apply relative flex aspect-square min-h-[2.75rem] w-full items-center justify-center rounded-lg text-sm font-bold outline-none transition sm:min-h-[2.25rem] sm:max-h-10 sm:text-[11px];
   }
 
   .lift-shell-header {

@@ -32,7 +32,7 @@ export function PageHeader({
       {description ? (
         <p
           className={cn(
-            'max-w-xl text-sm leading-relaxed text-[var(--lift-text-muted)]',
+            'max-w-xl text-base leading-relaxed text-[var(--lift-text-muted)] sm:text-sm',
             centered && 'mx-auto max-w-md',
           )}
         >
