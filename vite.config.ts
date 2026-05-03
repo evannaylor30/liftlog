@@ -18,6 +18,28 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
   },
   plugins: [
+    {
+      name: 'liftlog-dev-api-placeholder',
+      apply: 'serve',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url ?? ''
+          if (url === '/api' || url.startsWith('/api?') || url.startsWith('/api/')) {
+            res.statusCode = 503
+            res.setHeader('Content-Type', 'application/json; charset=utf-8')
+            res.end(
+              JSON.stringify({
+                error: 'API unavailable in Vite-only dev',
+                detail:
+                  'Run `npx vercel dev` from the project root (install Vercel CLI, copy .env), or test on your deployed site. Plain `npm run dev` does not run /api routes.',
+              }),
+            )
+            return
+          }
+          next()
+        })
+      },
+    },
     react(),
     tailwindcss(),
     {
